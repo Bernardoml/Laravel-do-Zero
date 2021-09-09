@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ContactFormRequest;
 use App\Models\Contact;
 use App\Notifications\NewContact;
-use Illuminate\Http\Request;
+use GrahamCampbell\ResultType\Success;
 use Illuminate\Support\Facades\Notification;
 
 class ContactController extends Controller
@@ -20,11 +21,13 @@ class ContactController extends Controller
         return view('site.contact.index');
     }
 
-    public function form(Request $request)
+    public function form(ContactFormRequest $request)
     {
         $contact = Contact::create($request->all());
+
         Notification::route('mail', [config('mail.from.address') => 'Bernardo ML'])->notify(new NewContact($contact));
 
-        ddd($contact);
+        toastr()->success('O contato foi criado com sucesso!');
+        return back();
     }
 }
